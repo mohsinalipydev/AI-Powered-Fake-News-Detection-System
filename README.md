@@ -1,0 +1,230 @@
+# 📰 Fake News Detection System
+
+A Natural Language Processing (NLP) and Machine Learning system that classifies news articles as **REAL** or **FAKE**, trained on a Kaggle news dataset, with multiple models benchmarked for best accuracy — served through a custom **newspaper-style HTML/CSS/JS web interface** with live confidence scores and influential-keyword explanations, all running from a single **Google Colab** notebook and shared publicly via **ngrok**.
+
+<img width="1023" height="915" alt="Screenshot 2026-07-10 195036" src="https://github.com/user-attachments/assets/2fa1c53d-722d-4d3b-a5f8-e7a7cb231381" />
+
+---
+
+## Short Description
+
+> An NLP-based fake news classifier (TF-IDF + Logistic Regression / Passive Aggressive / Naive Bayes, best model auto-selected) trained on a Kaggle Fake & Real News dataset, served through a custom newspaper-themed HTML/CSS/JS web app with confidence scores and keyword explanations — runs end-to-end in Google Colab via ngrok.
+
+---
+
+## Features
+
+- **Text Preprocessing / NLP Cleaning** — lowercasing, URL/HTML/punctuation/number removal, stopword filtering.
+- **TF-IDF Feature Extraction** — unigrams + bigrams for richer text representation.
+- **Multi-Model Benchmarking** — trains and compares three classifiers:
+  - Logistic Regression
+  - Passive Aggressive Classifier
+  - Multinomial Naive Bayes
+  - The best-performing model is **automatically selected and saved**.
+- **Evaluation Suite** — accuracy comparison chart, classification report, and confusion matrix heatmap for the best model.
+- **Explainable Predictions** — highlights the top words that most influenced each REAL/FAKE decision.
+- **Custom Newspaper-Style Interface** — built from scratch with plain **HTML, CSS, and JavaScript** (editorial/paper theme, distinct from typical dashboard UIs):
+  - Large article/headline input box
+  - REAL/FAKE verdict badge
+  - Confidence percentage bar
+  - "Influential keywords" chips
+- **One-Click Public Demo** — Flask backend exposed via **ngrok**, no separate hosting/deployment required.
+- **Fully Reproducible** — a single Colab notebook takes you from raw Kaggle data to a live web app.
+
+---
+
+## How It Works
+
+```
+┌───────────────────────────┐
+│ Fake and Real News Dataset │
+│ (Fake.csv + True.csv)      │
+└─────────────┬─────────────┘
+              ▼
+   ┌─────────────────────┐
+   │ Text Cleaning (NLP)   │
+   │ lowercase, stopwords, │
+   │ punctuation/URL removal│
+   └─────────┬─────────────┘
+              ▼
+   ┌─────────────────────┐
+   │ TF-IDF Vectorization  │
+   │ (unigrams + bigrams)  │
+   └─────────┬─────────────┘
+              ▼
+   ┌─────────────────────────────┐
+   │ Train & Compare 3 Models      │
+   │ Logistic Regression           │
+   │ Passive Aggressive Classifier │
+   │ Multinomial Naive Bayes       │
+   └─────────┬─────────────────────┘
+              ▼
+   ┌─────────────────────┐
+   │ Best Model Selected   │
+   │ (highest accuracy)    │
+   └─────────┬─────────────┘
+              ▼
+   ┌─────────────────────┐
+   │ Flask API             │
+   │ /api/predict           │
+   └─────────┬─────────────┘
+              ▼
+┌─────────────────────────────────┐
+│ HTML + CSS + JS Frontend          │
+│ (newspaper/editorial theme)       │
+│ verdict badge + confidence +      │
+│ influential keywords              │
+└─────────────────────────────────┘
+              ▼
+       🌐 Public URL via ngrok
+```
+
+**Pipeline steps:**
+1. Download the **Fake and Real News Dataset** from Kaggle (`Fake.csv`, `True.csv`).
+2. Label and merge the data (`1 = Fake`, `0 = Real`), combining title + article text.
+3. Clean the text: remove URLs, HTML, punctuation, numbers, and stopwords.
+4. Convert cleaned text into numerical features using **TF-IDF** (1-2 word n-grams).
+5. Train **three different classifiers** and evaluate each on a held-out test set.
+6. Automatically select the **highest-accuracy model** and save it along with the vectorizer.
+7. Serve predictions through a **Flask** API, including the top words driving each decision.
+8. Display results in a hand-built **HTML/CSS/JS** interface, exposed publicly through **ngrok**.
+
+---
+
+## Dataset Used
+
+| Dataset | Source | Purpose |
+|---|---|---|
+| Fake and Real News Dataset | Kaggle (`clmentbisaillon/fake-and-real-news-dataset`) | Labeled fake (`Fake.csv`) and real (`True.csv`) news articles for training/evaluation |
+
+---
+
+## Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Language | Python 3 |
+| NLP / ML | pandas, numpy, nltk, scikit-learn |
+| Backend | Flask |
+| Frontend | HTML5, CSS3, Vanilla JavaScript |
+| Visualization | matplotlib, seaborn |
+| Tunneling | pyngrok |
+| Environment | Google Colab |
+
+---
+
+## Project Structure
+
+```
+├── Fake_News_Detection_System.ipynb   # Main Colab notebook (run this)
+├── app.py                             # Flask backend (generated by notebook)
+├── templates/
+│   └── index.html                     # Newspaper-style frontend page
+├── static/
+│   ├── style.css                      # Editorial theme styling
+│   └── script.js                      # Frontend logic / API calls
+├── model.pkl                          # Saved best-performing trained model
+├── vectorizer.pkl                     # Saved TF-IDF vectorizer
+├── model_info.pkl                     # Name + accuracy of selected model
+└── README.md
+```
+
+---
+
+## Getting Started
+
+### Prerequisites (all free)
+
+You'll need two credentials before running the notebook:
+
+1. **Kaggle API Token** — to download the dataset
+   - Kaggle → Settings → API → *Create New Token*
+2. **ngrok Authtoken** — to expose the local Flask app publicly
+   - [ngrok.com](https://dashboard.ngrok.com/signup) → Your Authtoken
+
+### Run the Project
+
+1. Open `Fake_News_Detection_System.ipynb` in **Google Colab**
+2. Run the cells **in order, from top to bottom**
+3. When prompted, paste your Kaggle token and ngrok authtoken (inputs are hidden/secret)
+4. Review the model comparison chart and confusion matrix as the notebook trains
+5. At the end, a **public ngrok URL** will be printed — open it in your browser
+6. Paste a news headline or article and click **Analyze Article**
+
+### Stopping the App
+
+Run the final cell in the notebook, or manually:
+
+```python
+ngrok.kill()
+flask_process.terminate()
+```
+
+---
+
+## API Endpoints (Flask backend)
+
+| Endpoint | Method | Description |
+|---|---|---|
+| `/` | GET | Serves the main HTML interface |
+| `/api/predict` | POST | Accepts `{ "text": "..." }`, returns label, confidence, and influential keywords |
+
+Example:
+```
+POST /api/predict
+Content-Type: application/json
+
+{ "text": "Scientists confirm shocking new discovery about the moon..." }
+```
+
+Response:
+```json
+{
+  "label": "FAKE",
+  "confidence": 96.42,
+  "keywords": ["shocking", "confirm", "insider", "secret", "revealed"]
+}
+```
+
+---
+
+## Model Evaluation
+
+The notebook trains and compares three models on the same TF-IDF features:
+
+| Model | Typical Behavior |
+|---|---|
+| Logistic Regression | Strong, well-calibrated baseline; usually highest or near-highest accuracy |
+| Passive Aggressive Classifier | Fast online-learning linear model, competitive accuracy |
+| Multinomial Naive Bayes | Lightweight probabilistic baseline, slightly lower accuracy typically |
+
+The notebook automatically reports accuracy, a full classification report (precision/recall/F1), and a confusion matrix for the best model, then saves that model for the web app.
+
+---
+
+## Future Improvements
+
+- Fine-tune a transformer model (BERT/RoBERTa) for stronger generalization beyond lexical patterns.
+- Train on multiple, more diverse fake-news datasets to reduce source/style bias.
+- Add periodic retraining on fresh news data to keep up with evolving topics.
+- Add a browser extension or bulk-URL scanning mode.
+- Log and analyze misclassified examples to iteratively improve preprocessing/features.
+
+---
+
+## ⚠️ Notes & Limitations
+
+- **Not a fact-checker:** the model learns statistical/lexical writing patterns from its training data — it does **not verify real-world facts**. Always confirm important news through trusted, primary sources.
+- **Dataset bias:** the source dataset's fake vs. real articles can differ systematically in style/formatting, which can inflate reported accuracy compared to real-world, unseen news.
+- Keep your **Kaggle token** and **ngrok authtoken** private — never commit them to GitHub.
+- Free ngrok URLs are temporary and change each time the notebook is re-run.
+
+---
+
+## Author
+
+### Mohsin Ali
+
+## 📜 License
+
+This project is open-sourced under the [MIT License](LICENSE).
